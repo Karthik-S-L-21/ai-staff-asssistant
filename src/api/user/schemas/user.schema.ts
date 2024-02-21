@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Types } from 'mongoose';
-import { UserRole } from '../enums/user-designation.enum';
+import { UserDesignation, UserRole } from '../enums/user-designation.enum';
 
 @Schema({ timestamps: true })
 export class User {
   @Prop({ type: mongoose.Schema.Types.ObjectId })
   _id: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop()
   name: string;
 
   @Prop({ required: true })
@@ -16,14 +16,26 @@ export class User {
   @Prop({ required: true })
   password: string;
 
+  @Prop()
+  phone_number: string;
+
   @Prop({ required: true })
-  designation: UserRole;
+  role: UserRole;
+
+  @Prop({ required: true })
+  designation: UserDesignation;
 
   @Prop({ required: true })
   experience: number;
 
   @Prop({ required: true })
   allocated: boolean;
+
+  @Prop({ required: true })
+  current_allocated_projects: string[];
+
+  @Prop()
+  allocated_percentage: number;
 
   @Prop({ required: true })
   primary_skill: string[];

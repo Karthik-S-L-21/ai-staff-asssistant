@@ -1,4 +1,4 @@
-export enum UserRole {
+export enum UserDesignation {
   PM = 'Project Manager',
   FEL = 'Front End Lead',
   SSE = 'Senior Software Engineer',
@@ -12,4 +12,9 @@ export enum UserRole {
   DEVOPS = 'DevOps',
   IOS_DEVELOPER = 'iOS Developer',
   ANDROID_DEVELOPER = 'Android Developer',
+}
+
+export enum UserRole {
+  Admin = 'Admin',
+  Employee = 'Employee',
 }
