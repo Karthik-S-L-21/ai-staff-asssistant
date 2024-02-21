@@ -9,11 +9,13 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() loginDto: LoginDto, @Res() res: Response) {
-    const loginResponse = await this.authService.login(loginDto);
-    if (loginResponse) {
-      return res.send({
-        message: 'Logged in Successfully',
-      });
+    const user = await this.authService.validateUser(
+      loginDto.email,
+      loginDto.password,
+    );
+    if (user) {
+      const token = await this.authService.generateToken(loginDto);
+      return res.json({ token });
     } else {
       throw new NotFoundException({ message: 'User not Found' });
     }
