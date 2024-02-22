@@ -1,0 +1,45 @@
+{
+	"info": {
+		"_postman_id": "01184a8f-7d34-4639-a6a9-a1712e5d3fdb",
+		"name": "Ai Staff Assistant",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24221587",
+		"_collection_link": "https://www.postman.com/spaceflight-participant-61291926/workspace/code-and-theory/collection/24221587-01184a8f-7d34-4639-a6a9-a1712e5d3fdb?action=share&source=collection_link&creator=24221587"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@gmail.com\",\n    \"password\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

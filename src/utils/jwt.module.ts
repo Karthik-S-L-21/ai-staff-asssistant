@@ -6,12 +6,12 @@ import { JwtMiddleware } from '../middlewares/jwt.middleware';
 @Module({
   imports: [
     JwtModule.register({
-      secret: 'egt532@y',
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' },
     }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   providers: [JwtService],
-  exports: [JwtService, PassportModule],
+  exports: [JwtService, PassportModule, JwtModule],
 })
 export class JwtAuthModule {}
