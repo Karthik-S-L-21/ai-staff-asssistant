@@ -18,7 +18,10 @@ export class ProjectService {
         duration: 1,
         _id: 1,
       };
-      const projects = await this.projectModel.find({}, projection).exec();
+      const projects = await this.projectModel
+        .find({}, projection)
+        .sort({ createdAt: -1 })
+        .exec();
       return projects;
     } catch (error) {
       throw new InternalServerErrorException('Failed to reach mongoDB');
