@@ -42,6 +42,12 @@ export class User {
 
   @Prop({ required: true })
   secondary_skill: string[];
+
+  @Prop({ type: Date })
+  createdAt?: Date;
+
+  @Prop({ type: Date })
+  updatedAt?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

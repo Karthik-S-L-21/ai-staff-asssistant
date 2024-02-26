@@ -1,6 +1,6 @@
 export enum UserDesignation {
   PM = 'Project Manager',
-  FEL = 'Front End Lead',
+  FEL = 'FrontEnd Lead',
   SSE = 'Senior Software Engineer',
   SE = 'Software Engineer',
   PO = 'Product Owner',
@@ -15,6 +15,6 @@ export enum UserDesignation {
 }
 
 export enum UserRole {
-  Admin = 'Admin',
-  Employee = 'Employee',
+  Admin = 'admin',
+  Employee = 'employee',
 }

@@ -24,4 +24,11 @@ export class ProjectService {
       throw new InternalServerErrorException('Failed to reach mongoDB');
     }
   }
+
+  async getProjectById(projectId: string): Promise<Project> {
+    const project = await this.projectModel.findOne({
+      _id: projectId,
+    });
+    return project;
+  }
 }

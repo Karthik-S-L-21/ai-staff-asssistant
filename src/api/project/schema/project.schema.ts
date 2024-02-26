@@ -38,6 +38,12 @@ export class Project {
 
   @Prop()
   allocated_resources: Resource[];
+
+  @Prop({ type: Date })
+  createdAt?: Date;
+
+  @Prop({ type: Date })
+  updatedAt?: Date;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);
