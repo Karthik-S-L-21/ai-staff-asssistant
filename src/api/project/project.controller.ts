@@ -1,6 +1,14 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  NotFoundException,
+  Param,
+} from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { AddProjectDto } from './dto/add-project.dto';
+import { ProjectsParamDto } from './dto/project-param.dto';
 
 @Controller('project')
 export class ProjectController {
@@ -13,6 +21,21 @@ export class ProjectController {
       status: 200,
       message: 'Projects data fetched successfully.',
       result: projects,
+    };
+  }
+
+  @Get('/:id')
+  async getProjectById(@Param() projectParamDto: ProjectsParamDto) {
+    const project = await this.projectService.getProjectById(
+      projectParamDto.id,
+    );
+    if (project == null) {
+      throw new NotFoundException('Project not found.');
+    }
+    return {
+      statusCode: 200,
+      message: 'Projects Fetched Successfully',
+      result: project,
     };
   }
 
