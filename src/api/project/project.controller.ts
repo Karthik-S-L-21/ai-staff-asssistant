@@ -52,4 +52,17 @@ export class ProjectController {
       }
     } catch (err) {}
   }
+
+  @Get('/initiate-allocation/:id')
+  async initiateAllocation(@Param() projectParamDto: ProjectsParamDto) {
+    const response = await this.projectService.initiateAllocation(
+      projectParamDto,
+      'ML-url',
+    );
+    return {
+      status: 200,
+      message: 'allocation successfully initiated.',
+      result: response,
+    };
+  }
 }
