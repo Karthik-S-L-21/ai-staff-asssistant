@@ -1,6 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Types } from 'mongoose';
-import { UserDesignation, UserRole } from '../enums/user-designation.enum';
+import {
+  UserDesignation,
+  UserRole,
+  UserStream,
+} from '../enums/user-designation.enum';
 
 @Schema({ timestamps: true })
 export class User {
@@ -24,6 +28,9 @@ export class User {
 
   @Prop({ required: true })
   designation: UserDesignation;
+
+  @Prop({ required: true })
+  stream: UserStream;
 
   @Prop({ required: true })
   experience: number;

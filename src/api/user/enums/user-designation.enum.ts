@@ -18,3 +18,13 @@ export enum UserRole {
   Admin = 'admin',
   Employee = 'employee',
 }
+
+export enum UserStream {
+  BE = 'Backend',
+  FE = 'Frontend',
+  QA = 'QA',
+  Devops = 'Devops',
+  Design = 'Design',
+  HR = 'Human Resource',
+  Management = 'Management',
+}
