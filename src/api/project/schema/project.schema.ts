@@ -3,6 +3,7 @@ import mongoose, { Types } from 'mongoose';
 import { Platforms } from '../enums/project.enum';
 import { Position, PositionSchema } from './position.schema';
 import { Resource } from './resource.schema';
+import { currDate, toUTC } from '../../../utils/date-time.util';
 
 @Schema({ timestamps: true })
 export class Project {
@@ -25,21 +26,25 @@ export class Project {
   short_description: string;
 
   @Prop({ required: true })
-  skills_required: string[];
+  skills_preferred: string[];
+
+  @Prop()
+  skills_required?: string[];
 
   @Prop({ required: true })
   platforms_to_be_built: Platforms[];
 
-  @Prop({ required: true })
-  team_size: number;
+  @Prop()
+  team_size?: number;
 
-  @Prop({ type: PositionSchema })
-  team_structure: Position[];
+  //@Prop({ type: PositionSchema })
+  @Prop()
+  team_structure?: Position[];
 
   @Prop()
-  allocated_resources: Resource[];
+  allocated_resources?: Resource[];
 
-  @Prop({ type: Date })
+  @Prop({ type: Date, default: () => currDate() })
   createdAt?: Date;
 
   @Prop({ type: Date })

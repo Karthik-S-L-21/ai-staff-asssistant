@@ -1,5 +1,13 @@
-import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  NotFoundException,
+  Param,
+} from '@nestjs/common';
 import { ProjectService } from './project.service';
+import { AddProjectDto } from './dto/add-project.dto';
 import { ProjectsParamDto } from './dto/project-param.dto';
 
 @Controller('project')
@@ -29,5 +37,19 @@ export class ProjectController {
       message: 'Projects Fetched Successfully',
       result: project,
     };
+  }
+
+  @Post('/')
+  async addProject(@Body() addProjectDto: AddProjectDto) {
+    try {
+      const response = await this.projectService.addProject(addProjectDto);
+      if (response) {
+        return {
+          status: 201,
+          message: 'Project Saved successfully.',
+          result: response,
+        };
+      }
+    } catch (err) {}
   }
 }
