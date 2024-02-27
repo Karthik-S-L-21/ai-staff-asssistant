@@ -5,6 +5,7 @@ import {
   IsString,
   ValidateNested,
   IsEnum,
+  IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Platforms } from '../enums/project.enum';
@@ -51,19 +52,27 @@ export class AddProjectDto {
 
   @IsArray()
   @IsString({ each: true })
+  skills_preferred: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   skills_required: string[];
 
   @IsEnum(Platforms, { each: true })
   platforms_to_be_built: Platforms[];
 
+  @IsOptional()
   @IsNumber()
   team_size: number;
 
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => TeamStructureDto)
   team_structure: TeamStructureDto[];
 
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => AllocatedResourceDto)

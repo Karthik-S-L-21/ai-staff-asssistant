@@ -45,15 +45,16 @@ export class ProjectService {
         duration: addProjectDto.duration,
         estimated_budget: addProjectDto.estimated_budget,
         short_description: addProjectDto.short_description,
+        skills_preferred: addProjectDto.skills_preferred,
         skills_required: addProjectDto.skills_required,
         platforms_to_be_built: addProjectDto.platforms_to_be_built,
         team_size: addProjectDto.team_size,
-        team_structure: addProjectDto.team_structure.map((position) => ({
+        team_structure: addProjectDto.team_structure?.map((position) => ({
           title: position.title,
           allocation: position.allocation,
         })),
 
-        allocated_resources: addProjectDto.allocated_resources.map(
+        allocated_resources: addProjectDto.allocated_resources?.map(
           (resource) => ({
             name: resource.name,
             designation: resource.designation,

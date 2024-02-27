@@ -26,20 +26,23 @@ export class Project {
   short_description: string;
 
   @Prop({ required: true })
-  skills_required: string[];
+  skills_preferred: string[];
+
+  @Prop()
+  skills_required?: string[];
 
   @Prop({ required: true })
   platforms_to_be_built: Platforms[];
 
-  @Prop({ required: true })
-  team_size: number;
+  @Prop()
+  team_size?: number;
 
   //@Prop({ type: PositionSchema })
   @Prop()
-  team_structure: Position[];
+  team_structure?: Position[];
 
   @Prop()
-  allocated_resources: Resource[];
+  allocated_resources?: Resource[];
 
   @Prop({ type: Date, default: () => currDate() })
   createdAt?: Date;
