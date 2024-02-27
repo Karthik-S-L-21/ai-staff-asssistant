@@ -1,6 +1,8 @@
-// auth.middleware.ts
-
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NestMiddleware,
+} from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { AuthService } from '../api/auth/auth.service';
 
@@ -15,10 +17,10 @@ export class AuthMiddleware implements NestMiddleware {
       try {
         const user = await this.authService.validateUserByToken(token);
         if (user) {
-          req.user = user; // Attach user data to the request
+          req.user = user;
         }
       } catch (error) {
-        // Handle authentication error
+        throw new InternalServerErrorException();
       }
     }
 
