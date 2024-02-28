@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Post,
   Request,
   Res,
@@ -81,7 +82,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtGuard)
-  @Post('logout')
+  @Delete('logout')
   async logout(@Request() req, @Res() res: Response) {
     res.clearCookie('accessToken', {
       httpOnly: true,
