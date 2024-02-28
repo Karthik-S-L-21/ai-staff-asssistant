@@ -17,6 +17,7 @@ import { RefreshJwtGuard } from '../../guards/refresh-jwt.auth.guard';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
+import { JwtGuard } from '../../guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -77,5 +78,25 @@ export class AuthController {
   @Post('refresh')
   async refreshToken(@Request() req) {
     return this.authService.refreshToken(req.user);
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('logout')
+  async logout(@Request() req, @Res() res: Response) {
+    res.clearCookie('accessToken', {
+      httpOnly: true,
+      secure: this.secure,
+      sameSite: this.sameSite,
+    });
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: this.secure,
+      sameSite: this.sameSite,
+    });
+    return res.send({
+      statusCode: 200,
+      message: 'Logged Out Successfully.',
+      result: null,
+    });
   }
 }
