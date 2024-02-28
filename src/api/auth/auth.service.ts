@@ -1,10 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { LoginDto } from './dto/login.dto';
-import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../user/schemas/user.schema';
-import * as bcrypt from 'bcrypt';
 import { PayloadType } from '../@types';
+import { User } from '../user/schemas/user.schema';
+import { UserService } from '../user/user.service';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,14 +12,6 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  // async validateUser(email: string, password: string) {
-  //   const user = await this.userService.getUserDetails({ email: email });
-  //   if (user && password === user.password) {
-  //     const result = user;
-  //     return result;
-  //   }
-  //   return null;
-  // }
   async validateUser(email: string, password: string) {
     const user = await this.userService.getUserDetails({ email: email });
     // if (user && (await bcrypt.compare(password, user.password))) {       //TODO after implementing register user
@@ -90,12 +81,6 @@ export class AuthService {
   }
 
   async generateToken(loginDto) {
-    // const payload = {
-    //   username: loginDto.email,
-    //   sub: {
-    //     id: loginDto.email,
-    //   },
-    // };
     const payload: PayloadType = {
       email: loginDto.email,
       userId: loginDto._id.toString(),
