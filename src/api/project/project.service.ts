@@ -1,11 +1,12 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Project } from './schema/project.schema';
-import mongoose from 'mongoose';
+import mongoose, { FilterQuery, Model, UpdateQuery } from 'mongoose';
 import { AddProjectDto } from './dto/add-project.dto';
 import { ProjectsParamDto } from './dto/project-param.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { UpdateProjectDto } from './dto/update_project.dto';
 
 @Injectable()
 export class ProjectService {
@@ -21,6 +22,7 @@ export class ProjectService {
         project_name: 1,
         start_date: 1,
         duration: 1,
+        project_status: 1,
         _id: 1,
       };
       const projects = await this.projectModel
@@ -49,6 +51,7 @@ export class ProjectService {
         duration: addProjectDto.duration,
         estimated_budget: addProjectDto.estimated_budget,
         short_description: addProjectDto.short_description,
+        project_status: addProjectDto.project_status,
         skills_preferred: addProjectDto.skills_preferred,
         skills_required: addProjectDto.skills_required,
         platforms_to_be_built: addProjectDto.platforms_to_be_built,
@@ -71,7 +74,6 @@ export class ProjectService {
       const savedProject = await new this.projectModel(projectObj).save();
       return savedProject;
     } catch (error) {
-      console.error('Failed to add project', error);
       throw new InternalServerErrorException('Failed to add project');
     }
   }
@@ -174,5 +176,62 @@ export class ProjectService {
       //   'Failed to fetch data from ML model',
       // );
     }
+  }
+
+  async updateProjectDetails(
+    filter?: FilterQuery<Project>,
+    update?: UpdateQuery<Project>,
+    options?: any,
+  ): Promise<ReturnType<(typeof Model)['updateOne']>> {
+    return await this.projectModel.updateOne(filter, update, options).exec();
+  }
+  async updateProject(
+    projectId: string,
+    updateProjectDto: UpdateProjectDto,
+  ): Promise<Project> {
+    const updateQuery: any = {};
+
+    if (updateProjectDto.team_size !== undefined) {
+      updateQuery.team_size = updateProjectDto.team_size;
+    }
+
+    if (updateProjectDto.team_structure !== undefined) {
+      updateQuery.team_structure = updateProjectDto.team_structure;
+    }
+
+    if (updateProjectDto.allocated_resources !== undefined) {
+      updateQuery.allocated_resources = updateProjectDto.allocated_resources;
+    }
+
+    if (updateProjectDto.skills_required !== undefined) {
+      updateQuery.skills_required = updateProjectDto.skills_required;
+    }
+
+    await this.updateProjectDetails({ _id: projectId }, { $set: updateQuery });
+    const updatedProject = await this.getProjectById(projectId);
+
+    return updatedProject;
+  }
+
+  async freezeList(
+    projectId: string,
+    updateProjectDto: UpdateProjectDto,
+  ): Promise<Project> {
+    const updateQuery: any = {};
+
+    if (updateProjectDto.allocated_resources !== undefined) {
+      const result = await this.updateProjectDetails(
+        { _id: projectId },
+        {
+          $push: {
+            allocated_resources: {
+              $each: updateProjectDto.allocated_resources,
+            },
+          },
+        },
+      );
+    }
+    const updatedProject = await this.getProjectById(projectId);
+    return updatedProject;
   }
 }

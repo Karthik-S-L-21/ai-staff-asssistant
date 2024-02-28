@@ -8,10 +8,10 @@ import {
   IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { Platforms } from '../enums/project.enum';
+import { Platforms, ProjectStatus } from '../enums/project.enum';
 import { UserDesignation } from '../../user/enums/user-designation.enum';
 
-class TeamStructureDto {
+export class TeamStructureDto {
   @IsEnum(UserDesignation)
   title: string;
 
@@ -19,7 +19,7 @@ class TeamStructureDto {
   allocation: number;
 }
 
-class AllocatedResourceDto {
+export class AllocatedResourceDto {
   @IsString()
   name: string;
 
@@ -49,6 +49,9 @@ export class AddProjectDto {
 
   @IsString()
   short_description: string;
+
+  @IsEnum(ProjectStatus)
+  project_status: string;
 
   @IsArray()
   @IsString({ each: true })

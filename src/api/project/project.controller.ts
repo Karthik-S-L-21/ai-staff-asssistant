@@ -5,10 +5,12 @@ import {
   Post,
   NotFoundException,
   Param,
+  Patch,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { AddProjectDto } from './dto/add-project.dto';
 import { ProjectsParamDto } from './dto/project-param.dto';
+import { UpdateProjectDto } from './dto/update_project.dto';
 
 @Controller('project')
 export class ProjectController {
@@ -62,6 +64,38 @@ export class ProjectController {
     return {
       status: 200,
       message: 'allocation successfully initiated.',
+      result: response,
+    };
+  }
+
+  @Patch('/update-project/:id')
+  async updateProject(
+    @Param() projectParamDto: ProjectsParamDto,
+    @Body() updateProjectDto: UpdateProjectDto,
+  ) {
+    const response = await this.projectService.updateProject(
+      projectParamDto.id,
+      updateProjectDto,
+    );
+    return {
+      status: 200,
+      message: 'Project Updated successfully.',
+      result: response,
+    };
+  }
+
+  @Patch('/freeze-list/:id')
+  async freezeList(
+    @Param() projectParamDto: ProjectsParamDto,
+    @Body() updateProjectDto: UpdateProjectDto,
+  ) {
+    const response = await this.projectService.freezeList(
+      projectParamDto.id,
+      updateProjectDto,
+    );
+    return {
+      status: 200,
+      message: 'Project List Freezed  successfully.',
       result: response,
     };
   }

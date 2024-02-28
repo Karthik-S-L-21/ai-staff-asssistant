@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Types } from 'mongoose';
-import { Platforms } from '../enums/project.enum';
+import { Platforms, ProjectStatus } from '../enums/project.enum';
 import { Position, PositionSchema } from './position.schema';
 import { Resource } from './resource.schema';
 import { currDate, toUTC } from '../../../utils/date-time.util';
@@ -24,6 +24,9 @@ export class Project {
 
   @Prop()
   short_description: string;
+
+  @Prop({ required: true })
+  project_status: ProjectStatus;
 
   @Prop({ required: true })
   skills_preferred: string[];
