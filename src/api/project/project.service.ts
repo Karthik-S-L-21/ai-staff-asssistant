@@ -7,8 +7,9 @@ import { ProjectsParamDto } from './dto/project-param.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { UpdateProjectDto } from './dto/update_project.dto';
-import { positionToStreamMap } from './constants/project-constants';
+
 import { UserService } from '../user/user.service';
+import { positionToStreamMap } from './constants/project-constants';
 
 @Injectable()
 export class ProjectService {
@@ -221,33 +222,52 @@ export class ProjectService {
     projectId: string,
     updateProjectDto: UpdateProjectDto,
   ): Promise<Project> {
-    const updateQuery: any = {};
+    try {
+      const existingProject = await this.getProjectById(projectId);
 
-    if (updateProjectDto.allocated_resources !== undefined) {
-      const result = await this.updateProjectDetails(
-        { _id: projectId },
-        {
-          $push: {
-            allocated_resources: {
-              $each: updateProjectDto.allocated_resources,
+      if (updateProjectDto.allocated_resources !== undefined) {
+        const uniqueAllocatedResources =
+          updateProjectDto.allocated_resources.filter(
+            (resource) =>
+              !existingProject.allocated_resources.some(
+                (existingResource) =>
+                  existingResource.companyId === resource.companyId,
+              ),
+          );
+
+        // Update the project details, including unique allocated resources
+        const result = await this.updateProjectDetails(
+          { _id: projectId },
+          {
+            $push: {
+              allocated_resources: {
+                $each: uniqueAllocatedResources,
+              },
             },
           },
-        },
-      );
-    }
-    const updatedProject = await this.getProjectById(projectId);
-    const companyIdsSet = new Set(
-      updatedProject.allocated_resources.map((x) => x.companyId),
-    );
-    const uniqueCompanyIds = Array.from(companyIdsSet);
-    console.log('🚀 ~ ProjectService ~ uniqueCompanyIds:', uniqueCompanyIds);
-    for (const companyId of uniqueCompanyIds) {
-      await this.userService.updateUserUsingCompanyId(companyId, {
-        current_allocated_projects: [updatedProject.project_name],
-        allocated: true,
-      });
-    }
+        );
+      }
 
-    return updatedProject;
+      const updatedProject = await this.getProjectById(projectId);
+
+      // Update users as per their allocation
+      const companyIdsSet = new Set(
+        updatedProject.allocated_resources.map((x) => x.companyId),
+      );
+      const uniqueCompanyIds = Array.from(companyIdsSet);
+
+      for (const companyId of uniqueCompanyIds) {
+        await this.userService.updateUserUsingCompanyId(companyId, {
+          current_allocated_projects: [updatedProject.project_name],
+          allocated: true,
+        });
+      }
+
+      return updatedProject;
+    } catch (error) {
+      // Handle errors appropriately
+      console.error(error);
+      throw new InternalServerErrorException('Failed to freeze project');
+    }
   }
 }
