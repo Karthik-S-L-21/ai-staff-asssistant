@@ -1,5 +1,5 @@
 enum Stream {
-  Technology = 'technology',
+  Technology = 'Technology',
   QualityAssurance = 'Quality Assurance',
   Design = 'Design',
   Management = 'Management',
