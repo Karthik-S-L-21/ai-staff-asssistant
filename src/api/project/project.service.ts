@@ -8,6 +8,7 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { UpdateProjectDto } from './dto/update_project.dto';
 import { positionToStreamMap } from './constants/project-constants';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ProjectService {
@@ -15,6 +16,7 @@ export class ProjectService {
     @InjectModel(Project.name)
     private readonly projectModel: mongoose.Model<Project | null>,
     private readonly httpService: HttpService,
+    private readonly userService: UserService,
   ) {}
 
   async getAllProjects(): Promise<Project[]> {
@@ -234,6 +236,18 @@ export class ProjectService {
       );
     }
     const updatedProject = await this.getProjectById(projectId);
+    const companyIdsSet = new Set(
+      updatedProject.allocated_resources.map((x) => x.companyId),
+    );
+    const uniqueCompanyIds = Array.from(companyIdsSet);
+    console.log('🚀 ~ ProjectService ~ uniqueCompanyIds:', uniqueCompanyIds);
+    for (const companyId of uniqueCompanyIds) {
+      await this.userService.updateUserUsingCompanyId(companyId, {
+        current_allocated_projects: [updatedProject.project_name],
+        allocated: true,
+      });
+    }
+
     return updatedProject;
   }
 }
