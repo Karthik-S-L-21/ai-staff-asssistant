@@ -7,7 +7,7 @@ import { ProjectsParamDto } from './dto/project-param.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { UpdateProjectDto } from './dto/update_project.dto';
-import { positionToStreamMap } from './project-constants';
+import { positionToStreamMap } from './constants/project-constants';
 
 @Injectable()
 export class ProjectService {
