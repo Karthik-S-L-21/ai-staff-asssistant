@@ -265,7 +265,6 @@ export class ProjectService {
 
       return updatedProject;
     } catch (error) {
-      // Handle errors appropriately
       console.error(error);
       throw new InternalServerErrorException('Failed to freeze project');
     }
