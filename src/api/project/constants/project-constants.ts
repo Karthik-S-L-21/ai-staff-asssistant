@@ -1,4 +1,4 @@
-enum Stream {
+enum Category {
   Technology = 'Technology',
   QualityAssurance = 'Quality Assurance',
   Design = 'Design',
@@ -6,23 +6,23 @@ enum Stream {
   ProductStrategy = 'Product Strategy',
 }
 
-export const positionToStreamMap: Record<string, Stream> = {
-  'Software Engineer': Stream.Technology,
-  'Senior Software Engineer': Stream.Technology,
-  'Lead Software Engineer': Stream.Technology,
-  'Associate Quality Assurance Engineer': Stream.QualityAssurance,
-  'Quality Assurance Engineer': Stream.QualityAssurance,
-  'Senior Quality Assurance Engineer': Stream.QualityAssurance,
-  'Lead Quality Assurance Engineer': Stream.QualityAssurance,
-  Designer: Stream.Design,
-  'Senior Designer': Stream.Design,
-  'Lead Designer': Stream.Design,
-  'Engineering Manager': Stream.Management,
-  'Senior Engineering Manager': Stream.Management,
-  'Director of Engineering': Stream.Management,
-  'Senior Director of Engineering': Stream.Management,
-  'Product Manager': Stream.ProductStrategy,
-  'Senior Product Manager': Stream.ProductStrategy,
-  'Project Manager': Stream.Management,
-  'Senior Project Manager': Stream.Management,
+export const positionToCategoryMap: Record<string, Category> = {
+  'Software Engineer': Category.Technology,
+  'Senior Software Engineer': Category.Technology,
+  'Lead Software Engineer': Category.Technology,
+  'Associate Quality Assurance Engineer': Category.QualityAssurance,
+  'Quality Assurance Engineer': Category.QualityAssurance,
+  'Senior Quality Assurance Engineer': Category.QualityAssurance,
+  'Lead Quality Assurance Engineer': Category.QualityAssurance,
+  'Senior Designer': Category.Design,
+  'Lead Designer': Category.Design,
+  Designer: Category.Design,
+  'Engineering Manager': Category.Management,
+  'Senior Engineering Manager': Category.Management,
+  'Director of Engineering': Category.Management,
+  'Senior Director of Engineering': Category.Management,
+  'Product Manager': Category.ProductStrategy,
+  'Senior Product Manager': Category.ProductStrategy,
+  'Project Manager': Category.Management,
+  'Senior Project Manager': Category.Management,
 };

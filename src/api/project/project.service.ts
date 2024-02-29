@@ -9,7 +9,7 @@ import { firstValueFrom } from 'rxjs';
 import { UpdateProjectDto } from './dto/update_project.dto';
 
 import { UserService } from '../user/user.service';
-import { positionToStreamMap } from './constants/project-constants';
+import { positionToCategoryMap } from './constants/project-constants';
 
 @Injectable()
 export class ProjectService {
@@ -63,7 +63,7 @@ export class ProjectService {
         team_structure: addProjectDto.team_structure?.map((position) => ({
           title: position.title,
           allocation: position.allocation,
-          stream: positionToStreamMap[position.title],
+          category: positionToCategoryMap[position.title],
         })),
 
         allocated_resources: addProjectDto.allocated_resources?.map(
@@ -135,42 +135,91 @@ export class ProjectService {
               title: 'Frontend Lead (FE Lead)',
               name: 'Suchak Mihir Dinkarray',
               allocation: 100,
+              category: 'Frontend',
+              stream: 'Technology',
+              current_allocated_projects: ['Loreal'],
+              skills: ['python', 'java'],
+              experience: '17',
             },
             {
               title: 'Frontend Software Engineer (FE SE)',
               name: 'Raghav Sharma',
               allocation: 100,
+              category: 'Frontend',
+              stream: 'Technology',
+              current_allocated_projects: ['Loreal'],
+              skills: ['python', 'java'],
+              experience: '17',
             },
             {
               title: 'Backend Lead (BE Lead)',
               name: 'Srijita Thakur',
               allocation: 50,
+              category: 'Backend',
+              stream: 'Technology',
+              current_allocated_projects: ['Loreal'],
+              skills: ['python', 'java'],
+              experience: '17',
             },
             {
               title: 'Backend Associate Software Engineer (BE ASE)',
               name: 'Bandhan Roy',
               allocation: 100,
+              category: 'Backend',
+              stream: 'Technology',
+              current_allocated_projects: ['Loreal'],
+              skills: ['python', 'java'],
+              experience: '31',
             },
             {
               title: 'Quality Engineer (QA SSE)',
               name: 'Aishwarya Chandrakant Madiwal',
               allocation: 100,
+              category: 'QA',
+              stream: 'QualityAssurance',
+              current_allocated_projects: ['Loreal'],
+              skills: ['python', 'java'],
+              experience: '22',
             },
-            { title: 'Engineering Manager', name: 'Vinay S', allocation: 50 },
+            {
+              title: 'Engineering Manager',
+              name: 'Vinay S',
+              allocation: 50,
+              category: 'Management',
+              stream: 'Management',
+              current_allocated_projects: ['Loreal'],
+              skills: ['python', 'java'],
+              experience: '17',
+            },
             {
               title: 'Project Manager',
               name: 'Maryam Fatima',
               allocation: 100,
+              category: 'Management',
+              stream: 'Management',
+              current_allocated_projects: ['Lecet'],
+              skills: ['python', 'java'],
+              experience: '19',
             },
             {
               title: 'Product Manager',
               name: 'Pallavi Tandan',
               allocation: 50,
+              category: 'Management',
+              stream: 'Management',
+              current_allocated_projects: ['Lecet'],
+              skills: ['python', 'java'],
+              experience: '28',
             },
             {
               title: 'Director of Engineering',
               name: 'Shubhang Krishnamurthy Vishwamitra',
               allocation: 25,
+              category: 'Management',
+              stream: 'Management',
+              current_allocated_projects: ['Lecet'],
+              skills: ['python', 'java'],
+              experience: '34',
             },
           ],
           totalTeamSize: 9,
