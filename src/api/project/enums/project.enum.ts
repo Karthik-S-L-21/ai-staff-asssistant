@@ -3,3 +3,9 @@ export enum Platforms {
   Android = 'Android',
   Web = 'Web',
 }
+
+export enum ProjectStatus {
+  Not_Yet_Started = 'Not Yet Started',
+  Ongoing = 'Ongoing',
+  Launched = 'Launched',
+}

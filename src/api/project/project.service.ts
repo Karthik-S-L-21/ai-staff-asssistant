@@ -1,12 +1,15 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Project } from './schema/project.schema';
-import mongoose from 'mongoose';
+import mongoose, { FilterQuery, Model, UpdateQuery } from 'mongoose';
 import { AddProjectDto } from './dto/add-project.dto';
 import { ProjectsParamDto } from './dto/project-param.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import { positionToStreamMap } from './project-constants';
+import { UpdateProjectDto } from './dto/update_project.dto';
+
+import { UserService } from '../user/user.service';
+import { positionToCategoryMap } from './constants/project-constants';
 
 @Injectable()
 export class ProjectService {
@@ -14,6 +17,7 @@ export class ProjectService {
     @InjectModel(Project.name)
     private readonly projectModel: mongoose.Model<Project | null>,
     private readonly httpService: HttpService,
+    private readonly userService: UserService,
   ) {}
 
   async getAllProjects(): Promise<Project[]> {
@@ -22,6 +26,7 @@ export class ProjectService {
         project_name: 1,
         start_date: 1,
         duration: 1,
+        project_status: 1,
         _id: 1,
       };
       const projects = await this.projectModel
@@ -50,6 +55,7 @@ export class ProjectService {
         duration: addProjectDto.duration,
         estimated_budget: addProjectDto.estimated_budget,
         short_description: addProjectDto.short_description,
+        project_status: addProjectDto.project_status,
         skills_preferred: addProjectDto.skills_preferred,
         skills_required: addProjectDto.skills_required,
         platforms_to_be_built: addProjectDto.platforms_to_be_built,
@@ -57,7 +63,7 @@ export class ProjectService {
         team_structure: addProjectDto.team_structure?.map((position) => ({
           title: position.title,
           allocation: position.allocation,
-          stream: positionToStreamMap[position.title],
+          category: positionToCategoryMap[position.title],
         })),
 
         allocated_resources: addProjectDto.allocated_resources?.map(
@@ -73,7 +79,6 @@ export class ProjectService {
       const savedProject = await new this.projectModel(projectObj).save();
       return savedProject;
     } catch (error) {
-      console.error('Failed to add project', error);
       throw new InternalServerErrorException('Failed to add project');
     }
   }
@@ -130,42 +135,91 @@ export class ProjectService {
               title: 'Frontend Lead (FE Lead)',
               name: 'Suchak Mihir Dinkarray',
               allocation: 100,
+              category: 'Frontend',
+              stream: 'Technology',
+              current_allocated_projects: ['Loreal'],
+              skills: ['python', 'java'],
+              experience: '17',
             },
             {
               title: 'Frontend Software Engineer (FE SE)',
               name: 'Raghav Sharma',
               allocation: 100,
+              category: 'Frontend',
+              stream: 'Technology',
+              current_allocated_projects: ['Loreal'],
+              skills: ['python', 'java'],
+              experience: '17',
             },
             {
               title: 'Backend Lead (BE Lead)',
               name: 'Srijita Thakur',
               allocation: 50,
+              category: 'Backend',
+              stream: 'Technology',
+              current_allocated_projects: ['Loreal'],
+              skills: ['python', 'java'],
+              experience: '17',
             },
             {
               title: 'Backend Associate Software Engineer (BE ASE)',
               name: 'Bandhan Roy',
               allocation: 100,
+              category: 'Backend',
+              stream: 'Technology',
+              current_allocated_projects: ['Loreal'],
+              skills: ['python', 'java'],
+              experience: '31',
             },
             {
               title: 'Quality Engineer (QA SSE)',
               name: 'Aishwarya Chandrakant Madiwal',
               allocation: 100,
+              category: 'QA',
+              stream: 'QualityAssurance',
+              current_allocated_projects: ['Loreal'],
+              skills: ['python', 'java'],
+              experience: '22',
             },
-            { title: 'Engineering Manager', name: 'Vinay S', allocation: 50 },
+            {
+              title: 'Engineering Manager',
+              name: 'Vinay S',
+              allocation: 50,
+              category: 'Management',
+              stream: 'Management',
+              current_allocated_projects: ['Loreal'],
+              skills: ['python', 'java'],
+              experience: '17',
+            },
             {
               title: 'Project Manager',
               name: 'Maryam Fatima',
               allocation: 100,
+              category: 'Management',
+              stream: 'Management',
+              current_allocated_projects: ['Lecet'],
+              skills: ['python', 'java'],
+              experience: '19',
             },
             {
               title: 'Product Manager',
               name: 'Pallavi Tandan',
               allocation: 50,
+              category: 'Management',
+              stream: 'Management',
+              current_allocated_projects: ['Lecet'],
+              skills: ['python', 'java'],
+              experience: '28',
             },
             {
               title: 'Director of Engineering',
               name: 'Shubhang Krishnamurthy Vishwamitra',
               allocation: 25,
+              category: 'Management',
+              stream: 'Management',
+              current_allocated_projects: ['Lecet'],
+              skills: ['python', 'java'],
+              experience: '34',
             },
           ],
           totalTeamSize: 9,
@@ -175,6 +229,93 @@ export class ProjectService {
       // throw new InternalServerErrorException(
       //   'Failed to fetch data from ML model',
       // );
+    }
+  }
+
+  async updateProjectDetails(
+    filter?: FilterQuery<Project>,
+    update?: UpdateQuery<Project>,
+    options?: any,
+  ): Promise<ReturnType<(typeof Model)['updateOne']>> {
+    return await this.projectModel.updateOne(filter, update, options).exec();
+  }
+  async updateProject(
+    projectId: string,
+    updateProjectDto: UpdateProjectDto,
+  ): Promise<Project> {
+    const updateQuery: any = {};
+
+    if (updateProjectDto.team_size !== undefined) {
+      updateQuery.team_size = updateProjectDto.team_size;
+    }
+
+    if (updateProjectDto.team_structure !== undefined) {
+      updateQuery.team_structure = updateProjectDto.team_structure;
+    }
+
+    if (updateProjectDto.allocated_resources !== undefined) {
+      updateQuery.allocated_resources = updateProjectDto.allocated_resources;
+    }
+
+    if (updateProjectDto.skills_required !== undefined) {
+      updateQuery.skills_required = updateProjectDto.skills_required;
+    }
+
+    await this.updateProjectDetails({ _id: projectId }, { $set: updateQuery });
+    const updatedProject = await this.getProjectById(projectId);
+
+    return updatedProject;
+  }
+
+  async freezeList(
+    projectId: string,
+    updateProjectDto: UpdateProjectDto,
+  ): Promise<Project> {
+    try {
+      const existingProject = await this.getProjectById(projectId);
+
+      if (updateProjectDto.allocated_resources !== undefined) {
+        const uniqueAllocatedResources =
+          updateProjectDto.allocated_resources.filter(
+            (resource) =>
+              !existingProject.allocated_resources.some(
+                (existingResource) =>
+                  existingResource.companyId === resource.companyId,
+              ),
+          );
+
+        // Update the project details, including unique allocated resources
+        const result = await this.updateProjectDetails(
+          { _id: projectId },
+          {
+            $push: {
+              allocated_resources: {
+                $each: uniqueAllocatedResources,
+              },
+            },
+          },
+        );
+      }
+
+      const updatedProject = await this.getProjectById(projectId);
+
+      // Update users as per their allocation
+      const companyIdsSet = new Set(
+        updatedProject.allocated_resources.map((x) => x.companyId),
+      );
+      const uniqueCompanyIds = Array.from(companyIdsSet);
+
+      for (const companyId of uniqueCompanyIds) {
+        await this.userService.updateUserUsingCompanyId(companyId, {
+          current_allocated_projects: [updatedProject.project_name],
+          allocated: true,
+        });
+      }
+
+      return updatedProject;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException('Failed to freeze project');
     }
   }
 }

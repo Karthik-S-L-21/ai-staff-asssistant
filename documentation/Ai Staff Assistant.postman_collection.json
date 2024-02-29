@@ -40,6 +40,225 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Project",
+			"item": [
+				{
+					"name": "Get All Projects",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/project",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"project"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Project By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/project/:projectId",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"project",
+								":projectId"
+							],
+							"variable": [
+								{
+									"key": "projectId",
+									"value": "65deda9ee3a17920a92b0948"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Initiate allocation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/project/initiate-allocation/:id",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"project",
+								"initiate-allocation",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "65dd944978eca6752a4675df"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Project",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"project_name\": \"Sample Project\",\n    \"start_date\": \"2024-02-26T08:00:00.000Z\",\n    \"duration\": \"6 Months\",\n    \"estimated_budget\": \"2 M\",\n    \"short_description\": \"A sample project description\",\n    \"skills_required\": [\n        \"Web\",\n        \"Android\",\n        \"iOS\",\n        \"Backend\",\n        \"infra\"\n    ],\n    \"platforms_to_be_built\": [\n        \"IOS\",\n        \"Android\",\n        \"Web\"\n    ],\n    \"team_size\": 10,\n    \"team_structure\": [\n        {\n            \"title\": \"Front End Lead\",\n            \"allocation\": 100\n        },\n        {\n            \"title\": \"Senior Software Engineer\",\n            \"allocation\": 100\n        },\n        {\n            \"title\": \"Software Engineer\",\n            \"allocation\": 100\n        },\n        {\n            \"title\": \"Backend Lead\",\n            \"allocation\": 50\n        },\n        {\n            \"title\": \"Associate Software Engineer\",\n            \"allocation\": 100\n        },\n        {\n            \"title\": \"Manager\",\n            \"allocation\": 25\n        },\n        {\n            \"title\": \"Project Manager\",\n            \"allocation\": 20\n        },\n        {\n            \"title\": \"QA Lead\",\n            \"allocation\": 20\n        }\n    ],\n    \"allocated_resources\": [\n        {\n            \"name\": \"John Doe\",\n            \"designation\": \"Manager\",\n            \"allocation_percentage\": 50,\n            \"companyId\": \"YML0867\"\n        },\n        {\n            \"name\": \"Jane Doe\",\n            \"designation\": \"Software Engineer\",\n            \"allocation_percentage\": 50,\n            \"companyId\": \"YML0453\"\n        },\n        {\n            \"name\": \"Alex\",\n            \"designation\": \"Backend Lead\",\n            \"allocation_percentage\": 100,\n            \"companyId\": \"YML0722\"\n        },\n        {\n            \"name\": \"Sara\",\n            \"designation\": \"Front End Lead\",\n            \"allocation_percentage\": 100,\n            \"companyId\": \"YML0888\"\n        },\n        {\n            \"name\": \"Bob\",\n            \"designation\": \"Software Engineer\",\n            \"allocation_percentage\": 30,\n            \"companyId\": \"YML1432\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}/project",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"project"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Project partial data",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"project_name\": \"Sample Project2\",\n    \"start_date\": \"2024-02-26T08:00:00.000Z\",\n    \"duration\": \"6 Months\",\n    \"estimated_budget\": \"2 M\",\n    \"short_description\": \"A sample project description\",\n    \"skills_preferred\": [\n        \"Web\",\n        \"Android\",\n        \"iOS\",\n        \"Backend\",\n        \"infra\"\n    ],\n    \"platforms_to_be_built\": [\n        \"IOS\",\n        \"Android\",\n        \"Web\"\n    ],\n    \"project_status\": \"Not Yet Started\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}/project",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"project"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Project",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"team_size\": 16,\n    \"team_structure\": [\n        {\n            \"title\": \"FrontEnd Lead\",\n            \"allocation\": 100\n        },\n        {\n            \"title\": \"Backend Lead\",\n            \"allocation\": 50\n        }\n    ],\n    \"allocated_resources\": [\n        {\n            \"name\": \"John Doe\",\n            \"designation\": \"Project Manager\",\n            \"allocation_percentage\": 50,\n            \"companyId\": \"YML0867\"\n        },\n        {\n            \"name\": \"Jane Doe\",\n            \"designation\": \"Software Engineer\",\n            \"allocation_percentage\": 50,\n            \"companyId\": \"YML0453\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}/project/update-project/:id",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"project",
+								"update-project",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "65dec75b5d77b169ff3d625b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Freeze List",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"allocated_resources\": [\n        {\n            \"name\": \"John Doe\",\n            \"designation\": \"Project Manager\",\n            \"allocation_percentage\": 50,\n            \"companyId\": \"YML0867\"\n        },\n        {\n            \"name\": \"Jane Doe222\",\n            \"designation\": \"Software Engineer\",\n            \"allocation_percentage\": 50,\n            \"companyId\": \"YML0453\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}/project/freeze-list/:id",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"project",
+								"freeze-list",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "65deda9ee3a17920a92b0948"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get user Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/user",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "localhost",
+			"value": "http://localhost:3000"
 		}
 	]
 }

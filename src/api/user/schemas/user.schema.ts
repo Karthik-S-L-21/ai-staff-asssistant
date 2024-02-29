@@ -23,6 +23,9 @@ export class User {
   @Prop()
   phone_number: string;
 
+  @Prop()
+  companyId: string;
+
   @Prop({ required: true })
   role: UserRole;
 
