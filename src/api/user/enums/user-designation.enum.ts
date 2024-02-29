@@ -32,4 +32,6 @@ export enum UserStream {
   Design = 'Design',
   HR = 'Human Resource',
   Management = 'Management',
+  IOS = 'IOS',
+  Android = 'Android',
 }
