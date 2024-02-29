@@ -7,6 +7,7 @@ import { ProjectsParamDto } from './dto/project-param.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { UpdateProjectDto } from './dto/update_project.dto';
+import { positionToStreamMap } from './project-constants';
 
 @Injectable()
 export class ProjectService {
@@ -59,6 +60,7 @@ export class ProjectService {
         team_structure: addProjectDto.team_structure?.map((position) => ({
           title: position.title,
           allocation: position.allocation,
+          stream: positionToStreamMap[position.title],
         })),
 
         allocated_resources: addProjectDto.allocated_resources?.map(
