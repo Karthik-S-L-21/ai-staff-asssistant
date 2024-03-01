@@ -17,16 +17,16 @@ export class UpdateProjectDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => TeamStructureDto)
-  team_structure: TeamStructureDto[];
+  team_structure?: TeamStructureDto[];
 
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => AllocatedResourceDto)
-  allocated_resources: AllocatedResourceDto[];
+  allocated_resources?: AllocatedResourceDto[];
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  skills_required: string[];
+  skills_required?: string[];
 }

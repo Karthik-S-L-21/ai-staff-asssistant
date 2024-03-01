@@ -10,6 +10,7 @@ import { UpdateProjectDto } from './dto/update_project.dto';
 
 import { UserService } from '../user/user.service';
 import { positionToCategoryMap } from './constants/project-constants';
+import { FreezeProjectDto } from './dto/freeze_list.dto';
 
 @Injectable()
 export class ProjectService {
@@ -86,6 +87,10 @@ export class ProjectService {
   async initiateAllocation(projectParamDto: ProjectsParamDto, mlUrl: string) {
     try {
       const projectDetails = await this.getProjectById(projectParamDto.id);
+      // console.log(
+      //   '🚀 ~ ProjectService ~ initiateAllocation ~ projectDetails:',
+      //   projectDetails,
+      // );
       const mlRequestData = {
         prompt_question: `
           Project Name: ${projectDetails.project_name}
@@ -103,23 +108,54 @@ export class ProjectService {
           engineer into the project.
         `,
       };
-      console.log(
-        '🚀 ~ ProjectService ~ initiateAllocation ~ mlRequestData:',
-        mlRequestData,
-      );
+      // console.log(
+      //   '🚀 ~ ProjectService ~ initiateAllocation ~ mlRequestData:',
+      //   mlRequestData,
+      // );
 
       // Make a request to the ML API
-      const mlApiResponse = await firstValueFrom(
-        this.httpService.post(mlUrl, mlRequestData),
+      // const mlApiResponse = await firstValueFrom(
+      //   this.httpService.post(mlUrl, mlRequestData),
+      // );
+      // const mlResponseData = mlApiResponse.data;
+      const mlResponseData2 = `Project Name: Langchain POC
+      Project Description: This is a proof-of-concept project aimed at exploring the capabilities of Langchain.
+      Duration: 2 Months
+      Budget: $0.25M
+      Start Date: 03-01-2024
+Platforms to be built:
+        - Web (preferably angular)
+        - Backend (preferably java)
+        - Machine Learning Langchain 
+Engineering Team:
+          - Team Structure:
+            - Frontend Lead (FE Lead) - 1 Name - Mihir Suchak (100% allocation)
+            - Frontend Software Engineer (FE SE) - 1 Name - Aster Savio Fernandez (100% allocation)
+            - Backend Lead (BE Lead) - 1 Name - Yadulla Naresh Reddy (50% allocation)
+            - Backend Associate Software Engineer (BE ASE) - 1 Name - Shweta Ravi Talapalli (100% allocation)
+            - Quality Engineer (QA SSE) - 1 Name - Vighnesh V Pai (100% allocation)
+            - Engineering Manager - 1 Name - Shashanka N (50% allocation)
+            - Project Manager - 1 Name - S. Vakesh (100% allocation)
+            - Product Manager - 1 Name - Utpreksha Singh (50% allocation)
+            - Director of Engineering - 1 Name - Shanti Kuropati (25% allocation)
+          - Total Team Size: 9
+Tech Stacks:
+        - Java
+        - Python
+        - Machine Learning`;
+      const result2 = await this.transformMlApiResponse(mlResponseData2);
+      console.log(
+        '🚀 ~ ProjectService ~ initiateAllocation ~ result2:',
+        result2,
       );
-      const mlResponseData = mlApiResponse.data;
-
       return {
         statusCode: 200,
         message: 'Initiation Successful',
-        result: mlResponseData,
+        result: result2,
       };
     } catch (error) {
+      console.log('🚀 ~ ProjectService ~ initiateAllocation ~ error:', error);
+
       //dummy data for timebeing
       return {
         projectName: 'Gen AI POC',
@@ -232,6 +268,116 @@ export class ProjectService {
     }
   }
 
+  async transformMlApiResponse(mlApiResponse: string) {
+    // Split the response into lines
+    const lines = mlApiResponse.split('\n');
+    console.log(
+      '🚀 ~ ProjectService ~ transformMlApiResponse ~ lines:',
+      lines[2],
+    );
+
+    // Extract values from each line
+    const projectName = lines[0].split(': ')[1].trim();
+    console.log(
+      '🚀 ~ ProjectService ~ transformMlApiResponse ~ projectName:',
+      projectName,
+    );
+    const projectDescription = lines[1].split(': ')[1].trim();
+    console.log(
+      '🚀 ~ ProjectService ~ transformMlApiResponse ~ projectDescription:',
+      projectDescription,
+    );
+    const duration = lines[2].split(': ')[1].trim();
+    console.log(
+      '🚀 ~ ProjectService ~ transformMlApiResponse ~ duration:',
+      duration,
+    );
+    const budget = lines[3].split(': ')[1].trim();
+    console.log(
+      '🚀 ~ ProjectService ~ transformMlApiResponse ~ budget:',
+      budget,
+    );
+    const startDate = lines[4].split(': ')[1].trim();
+    console.log(
+      '🚀 ~ ProjectService ~ transformMlApiResponse ~ startDate:',
+      startDate,
+    );
+
+    // Extract platforms to be built
+    const platformsToBeBuilt = lines
+      .slice(6, lines.indexOf('Engineering Team:'))
+      .map((line) => line.trim().replace(/^- /, ''));
+    console.log(
+      '🚀 ~ ProjectService ~ transformMlApiResponse ~ platformsToBeBuilt:',
+      platformsToBeBuilt,
+    );
+
+    // Extract engineering team details
+    const engineeringTeam = lines
+      .slice(
+        lines.indexOf('Engineering Team:') + 3,
+        lines.indexOf('Total Team Size:'),
+      )
+      .map((line) => {
+        const [title, nameTag, name, allocation, companyId] = line
+          .trim()
+          .split(' - ')
+          .map((item) => item.trim().replace(/^- /, ''));
+
+        if (name !== undefined) {
+          return {
+            title,
+            nameTag,
+            name,
+            allocation: parseInt(allocation, 10),
+            companyId,
+          };
+        }
+      })
+      .filter(Boolean);
+    console.log(
+      '🚀 ~ ProjectService ~ transformMlApiResponse ~ engineeringTeam:',
+      engineeringTeam,
+    );
+    // Extract Total Team Size
+    const totalTeamSizeIndex = lines.indexOf('Total Team Size:');
+    const totalTeamSize =
+      totalTeamSizeIndex !== -1
+        ? parseInt(lines[totalTeamSizeIndex].split(': ')[1].trim(), 10)
+        : undefined;
+    console.log(
+      '🚀 ~ ProjectService ~ transformMlApiResponse ~ totalTeamSizeIndex:',
+      totalTeamSizeIndex,
+    );
+
+    // Extract tech stacks
+    const techStacks = lines
+      .slice(lines.indexOf('Tech Stacks:') + 1)
+      .map((line) => line.trim().replace(/^- /, ''));
+    console.log(
+      '🚀 ~ ProjectService ~ transformMlApiResponse ~ techStacks:',
+      techStacks,
+    );
+
+    // Construct the final JSON
+    const result = {
+      projectName,
+      projectDescription,
+      duration,
+      budget,
+      startDate,
+      platformsToBeBuilt,
+      engineeringTeam,
+      techStacks,
+    };
+    console.log(
+      '🚀 ~ ProjectService ~ transformMlApiResponse ~ result:',
+      result,
+    );
+
+    return result;
+  }
+
   async updateProjectDetails(
     filter?: FilterQuery<Project>,
     update?: UpdateQuery<Project>,
@@ -267,55 +413,67 @@ export class ProjectService {
     return updatedProject;
   }
 
-  async freezeList(
-    projectId: string,
-    updateProjectDto: UpdateProjectDto,
-  ): Promise<Project> {
-    try {
-      const existingProject = await this.getProjectById(projectId);
+  // async freezeList(
+  //   projectId: string,
+  //   updateProjectDto: UpdateProjectDto,
+  // ): Promise<Project> {
+  //   try {
+  //     const existingProject = await this.getProjectById(projectId);
 
-      if (updateProjectDto.allocated_resources !== undefined) {
-        const uniqueAllocatedResources =
-          updateProjectDto.allocated_resources.filter(
-            (resource) =>
-              !existingProject.allocated_resources.some(
-                (existingResource) =>
-                  existingResource.companyId === resource.companyId,
-              ),
-          );
+  //     if (updateProjectDto.allocated_resources !== undefined) {
+  //       const uniqueAllocatedResources =
+  //         updateProjectDto.allocated_resources.filter(
+  //           (resource) =>
+  //             !existingProject.allocated_resources.some(
+  //               (existingResource) =>
+  //                 existingResource.companyId === resource.companyId,
+  //             ),
+  //         );
 
-        // Update the project details, including unique allocated resources
-        const result = await this.updateProjectDetails(
-          { _id: projectId },
-          {
-            $push: {
-              allocated_resources: {
-                $each: uniqueAllocatedResources,
-              },
-            },
-          },
-        );
-      }
+  //       // Update the project details, including unique allocated resources
+  //       const result = await this.updateProjectDetails(
+  //         { _id: projectId },
+  //         {
+  //           $push: {
+  //             allocated_resources: {
+  //               $each: uniqueAllocatedResources,
+  //             },
+  //           },
+  //         },
+  //       );
+  //     }
 
-      const updatedProject = await this.getProjectById(projectId);
+  //     const updatedProject = await this.getProjectById(projectId);
 
-      // Update users as per their allocation
-      const companyIdsSet = new Set(
-        updatedProject.allocated_resources.map((x) => x.companyId),
-      );
-      const uniqueCompanyIds = Array.from(companyIdsSet);
+  //     // Update users as per their allocation
+  //     const companyIdsSet = new Set(
+  //       updatedProject.allocated_resources.map((x) => x.companyId),
+  //     );
+  //     const uniqueCompanyIds = Array.from(companyIdsSet);
 
-      for (const companyId of uniqueCompanyIds) {
-        await this.userService.updateUserUsingCompanyId(companyId, {
-          current_allocated_projects: [updatedProject.project_name],
-          allocated: true,
-        });
-      }
+  //     for (const companyId of uniqueCompanyIds) {
+  //       await this.userService.updateUserUsingCompanyId(companyId, {
+  //         current_allocated_projects: [updatedProject.project_name],
+  //         allocated: true,
+  //       });
+  //     }
 
-      return updatedProject;
-    } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException('Failed to freeze project');
+  //     return updatedProject;
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw new InternalServerErrorException('Failed to freeze project');
+  //   }
+  // }
+
+  async freezeList(projectId: string, freezeProjectDto: FreezeProjectDto) {
+    const existingProject = await this.getProjectById(projectId);
+    const namesSet = new Set(
+      existingProject.allocated_resources.map((x) => x.name),
+    );
+    const uniqueNames = Array.from(namesSet);
+
+    for (const name of uniqueNames) {
+      await this.userService.updateUserUsingName(name, freezeProjectDto);
     }
   }
 }
