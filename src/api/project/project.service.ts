@@ -312,6 +312,30 @@ Tech Stacks:
       platformsToBeBuilt,
     );
 
+    // // Extract engineering team details
+    // const engineeringTeam = lines
+    //   .slice(
+    //     lines.indexOf('Engineering Team:') + 3,
+    //     lines.indexOf('Total Team Size:'),
+    //   )
+    //   .map((line) => {
+    //     const [title, nameTag, name, allocation, companyId] = line
+    //       .trim()
+    //       .split(' - ')
+    //       .map((item) => item.trim().replace(/^- /, ''));
+
+    //     if (name !== undefined) {
+    //       return {
+    //         title,
+    //         nameTag,
+    //         name,
+    //         allocation: parseInt(allocation, 10),
+    //         companyId,
+    //       };
+    //     }
+    //   })
+    //   .filter(Boolean);
+
     // Extract engineering team details
     const engineeringTeam = lines
       .slice(
@@ -319,35 +343,62 @@ Tech Stacks:
         lines.indexOf('Total Team Size:'),
       )
       .map((line) => {
-        const [title, nameTag, name, allocation, companyId] = line
-          .trim()
-          .split(' - ')
-          .map((item) => item.trim().replace(/^- /, ''));
+        // Check if the line has the expected structure
+        if (!line.includes(' - ')) {
+          return null; // Skip lines that don't have the expected structure
+        }
 
-        if (name !== undefined) {
+        const [rawTitle, nameTag, rest] = line.trim().split(' - ');
+
+        // Remove leading hyphen from the title
+        const title = rawTitle.replace(/^- /, '');
+
+        // Check if rest contains parentheses
+        const hasParentheses = /\((.+?)\)/.test(rest);
+
+        // If it doesn't contain parentheses, consider the whole rest as the name
+        if (!hasParentheses) {
+          const name = rest?.trim();
+          if (name !== '') {
+            // Check if name is not an empty string
+            return {
+              title,
+              nameTag,
+              name,
+              allocation: undefined,
+              companyId: undefined,
+            };
+          }
+        }
+
+        // If it contains parentheses, extract name and allocation
+        const [name, allocationStr] =
+          rest
+            .match(/(.+?)\((.+?)\)/)
+            ?.slice(1)
+            .map((item) => item?.trim()) || [];
+
+        // Check if the name is present and not an empty string
+        if (name !== undefined && name !== '') {
+          // Convert allocation percentage to a number
+          const allocation = parseFloat(allocationStr);
+
           return {
             title,
             nameTag,
             name,
-            allocation: parseInt(allocation, 10),
-            companyId,
+            allocation: isNaN(allocation) ? undefined : allocation,
+            companyId: undefined,
           };
         }
+
+        return null; // Skip entries without a valid name
       })
-      .filter(Boolean);
+      .filter((entry) => entry !== null && entry.name !== undefined); // Remove null entries
+
     console.log(
       '🚀 ~ ProjectService ~ transformMlApiResponse ~ engineeringTeam:',
       engineeringTeam,
-    );
-    // Extract Total Team Size
-    const totalTeamSizeIndex = lines.indexOf('Total Team Size:');
-    const totalTeamSize =
-      totalTeamSizeIndex !== -1
-        ? parseInt(lines[totalTeamSizeIndex].split(': ')[1].trim(), 10)
-        : undefined;
-    console.log(
-      '🚀 ~ ProjectService ~ transformMlApiResponse ~ totalTeamSizeIndex:',
-      totalTeamSizeIndex,
     );
 
     // Extract tech stacks
@@ -413,62 +464,62 @@ Tech Stacks:
     return updatedProject;
   }
 
-  // async freezeList(
-  //   projectId: string,
-  //   updateProjectDto: UpdateProjectDto,
-  // ): Promise<Project> {
-  //   try {
-  //     const existingProject = await this.getProjectById(projectId);
+  async addToProject(
+    projectId: string,
+    updateProjectDto: UpdateProjectDto,
+  ): Promise<Project> {
+    try {
+      const existingProject = await this.getProjectById(projectId);
 
-  //     if (updateProjectDto.allocated_resources !== undefined) {
-  //       const uniqueAllocatedResources =
-  //         updateProjectDto.allocated_resources.filter(
-  //           (resource) =>
-  //             !existingProject.allocated_resources.some(
-  //               (existingResource) =>
-  //                 existingResource.companyId === resource.companyId,
-  //             ),
-  //         );
+      if (updateProjectDto.allocated_resources !== undefined) {
+        const uniqueAllocatedResources =
+          updateProjectDto.allocated_resources.filter(
+            (resource) =>
+              !existingProject.allocated_resources.some(
+                (existingResource) =>
+                  existingResource.companyId === resource.companyId,
+              ),
+          );
 
-  //       // Update the project details, including unique allocated resources
-  //       const result = await this.updateProjectDetails(
-  //         { _id: projectId },
-  //         {
-  //           $push: {
-  //             allocated_resources: {
-  //               $each: uniqueAllocatedResources,
-  //             },
-  //           },
-  //         },
-  //       );
-  //     }
+        // Update the project details, including unique allocated resources
+        const result = await this.updateProjectDetails(
+          { _id: projectId },
+          {
+            $push: {
+              allocated_resources: {
+                $each: uniqueAllocatedResources,
+              },
+            },
+          },
+        );
+      }
 
-  //     const updatedProject = await this.getProjectById(projectId);
+      const updatedProject = await this.getProjectById(projectId);
 
-  //     // Update users as per their allocation
-  //     const companyIdsSet = new Set(
-  //       updatedProject.allocated_resources.map((x) => x.companyId),
-  //     );
-  //     const uniqueCompanyIds = Array.from(companyIdsSet);
+      // Update users as per their allocation
+      const companyIdsSet = new Set(
+        updatedProject.allocated_resources.map((x) => x.companyId),
+      );
+      const uniqueCompanyIds = Array.from(companyIdsSet);
 
-  //     for (const companyId of uniqueCompanyIds) {
-  //       await this.userService.updateUserUsingCompanyId(companyId, {
-  //         current_allocated_projects: [updatedProject.project_name],
-  //         allocated: true,
-  //       });
-  //     }
+      for (const companyId of uniqueCompanyIds) {
+        await this.userService.updateUserUsingCompanyId(companyId, {
+          current_allocated_projects: [updatedProject.project_name],
+          allocated: true,
+        });
+      }
 
-  //     return updatedProject;
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw new InternalServerErrorException('Failed to freeze project');
-  //   }
-  // }
+      return updatedProject;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException('Failed to freeze project');
+    }
+  }
 
   async freezeList(projectId: string, freezeProjectDto: FreezeProjectDto) {
     const existingProject = await this.getProjectById(projectId);
     const namesSet = new Set(
-      existingProject.allocated_resources.map((x) => x.name),
+      freezeProjectDto.allocated_resources.map((x) => x?.name),
     );
     const uniqueNames = Array.from(namesSet);
 

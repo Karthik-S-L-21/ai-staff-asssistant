@@ -84,21 +84,21 @@ export class ProjectController {
     };
   }
 
-  // @Patch('/freeze-list/:id')
-  // async freezeList(
-  //   @Param() projectParamDto: ProjectsParamDto,
-  //   @Body() updateProjectDto: UpdateProjectDto,
-  // ) {
-  //   const response = await this.projectService.freezeList(
-  //     projectParamDto.id,
-  //     updateProjectDto,
-  //   );
-  //   return {
-  //     status: 200,
-  //     message: 'Project List Freezed  successfully.',
-  //     result: response,
-  //   };
-  // }
+  @Patch('/add-to-project/:id')
+  async addToProject(
+    @Param() projectParamDto: ProjectsParamDto,
+    @Body() updateProjectDto: UpdateProjectDto,
+  ) {
+    const response = await this.projectService.freezeList(
+      projectParamDto.id,
+      updateProjectDto,
+    );
+    return {
+      status: 200,
+      message: 'Project List Freezed  successfully.',
+      result: response,
+    };
+  }
 
   @Patch('/freeze-list/:id')
   async freezeList(
