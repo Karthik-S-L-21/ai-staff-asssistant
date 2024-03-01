@@ -9,8 +9,9 @@ import { firstValueFrom } from 'rxjs';
 import { UpdateProjectDto } from './dto/update_project.dto';
 
 import { UserService } from '../user/user.service';
-import { positionToCategoryMap } from './constants/project-constants';
+import { Category, positionToCategoryMap } from './constants/project-constants';
 import { FreezeProjectDto } from './dto/freeze_list.dto';
+import { UserStream } from '../user/enums/user-designation.enum';
 
 @Injectable()
 export class ProjectService {
@@ -367,6 +368,8 @@ Tech Stacks:
               name,
               allocation: undefined,
               companyId: undefined,
+              stream: undefined,
+              category: undefined,
             };
           }
         }
@@ -383,18 +386,66 @@ Tech Stacks:
           // Convert allocation percentage to a number
           const allocation = parseFloat(allocationStr);
 
+          // Assign stream and category based on the title
+          let stream;
+          let category;
+
+          switch (title) {
+            case 'Frontend Lead (FE Lead)':
+            case 'Frontend Software Engineer (FE SE)':
+            case 'Frontend Senior Software Engineer (FE SSE)':
+            case 'Frontend Associate Software Engineer (FE ASE)':
+              stream = UserStream.FE;
+              category = Category.Technology;
+              break;
+            case 'Backend Lead (FE Lead)':
+            case 'Backend Software Engineer (FE SE)':
+            case 'Backend Senior Software Engineer (FE SSE)':
+            case 'Backend Associate Software Engineer (FE ASE)':
+              stream = UserStream.BE;
+              category = Category.Technology;
+              break;
+            case 'Quality Engineer (QA SSE)':
+              stream = UserStream.QA;
+              category = Category.Technology;
+              break;
+            case 'Project Manager':
+            case 'Director of Engineering':
+            case 'Engineering Manager':
+            case 'Senior Engineering Manager':
+            case 'Product Manager':
+            case 'Product Owner':
+              stream = UserStream.Management;
+              category = Category.ProductStrategy;
+              break;
+            case 'Machine Learning Engineer (MLE)':
+              stream = UserStream.ML;
+              category = Category.Technology;
+              break;
+            default:
+              stream = UserStream.Management;
+              category = Category.Technology;
+          }
+
           return {
             title,
             nameTag,
             name,
             allocation: isNaN(allocation) ? undefined : allocation,
             companyId: undefined,
+            stream,
+            category,
           };
         }
 
         return null; // Skip entries without a valid name
       })
       .filter((entry) => entry !== null && entry.name !== undefined); // Remove null entries
+
+    console.log(
+      '🚀 ~ ProjectService ~ transformMlApiResponse ~ engineeringTeam:',
+      engineeringTeam,
+    );
 
     console.log(
       '🚀 ~ ProjectService ~ transformMlApiResponse ~ engineeringTeam:',
