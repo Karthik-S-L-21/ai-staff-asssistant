@@ -1,9 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Types } from 'mongoose';
-import { Platforms, ProjectStatus } from '../enums/project.enum';
-import { Position, PositionSchema } from './position.schema';
+import { currDate } from '../../../utils/date-time.util';
+import {
+  Platforms,
+  ProjectAllocationStatus,
+  ProjectStatus,
+} from '../enums/project.enum';
+import { Position } from './position.schema';
 import { Resource } from './resource.schema';
-import { currDate, toUTC } from '../../../utils/date-time.util';
 
 @Schema({ timestamps: true })
 export class Project {
@@ -28,6 +32,9 @@ export class Project {
   @Prop({ required: true })
   project_status: ProjectStatus;
 
+  @Prop({ required: true, default: ProjectAllocationStatus.Unallocated })
+  project_allocation_status: ProjectAllocationStatus;
+
   @Prop({ required: true })
   skills_preferred: string[];
 
@@ -40,7 +47,6 @@ export class Project {
   @Prop()
   team_size?: number;
 
-  //@Prop({ type: PositionSchema })
   @Prop()
   team_structure?: Position[];
 

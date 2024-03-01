@@ -8,7 +8,11 @@ import {
   IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { Platforms, ProjectStatus } from '../enums/project.enum';
+import {
+  Platforms,
+  ProjectAllocationStatus,
+  ProjectStatus,
+} from '../enums/project.enum';
 import { UserDesignation } from '../../user/enums/user-designation.enum';
 
 export class TeamStructureDto {
@@ -51,35 +55,39 @@ export class AddProjectDto {
   short_description: string;
 
   @IsEnum(ProjectStatus)
-  project_status: string;
+  project_status: ProjectStatus;
 
-  @IsArray()
-  @IsString({ each: true })
-  skills_preferred: string[];
+  @IsEnum(ProjectAllocationStatus)
+  project_allocation_status: ProjectAllocationStatus;
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  skills_required: string[];
+  skills_preferred?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  skills_required?: string[];
 
   @IsEnum(Platforms, { each: true })
   platforms_to_be_built: Platforms[];
 
   @IsOptional()
   @IsNumber()
-  team_size: number;
+  team_size?: number;
 
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => TeamStructureDto)
-  team_structure: TeamStructureDto[];
+  team_structure?: TeamStructureDto[];
 
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => AllocatedResourceDto)
-  allocated_resources: AllocatedResourceDto[];
+  allocated_resources?: AllocatedResourceDto[];
 
   //   @IsDate()
   //   createdAt: Date;

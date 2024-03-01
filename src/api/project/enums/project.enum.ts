@@ -9,3 +9,8 @@ export enum ProjectStatus {
   Ongoing = 'Ongoing',
   Launched = 'Launched',
 }
+
+export enum ProjectAllocationStatus {
+  Allocated = 'Allocated',
+  Unallocated = 'Unallocated',
+}
