@@ -59,7 +59,7 @@ export class ProjectController {
   async initiateAllocation(@Param() projectParamDto: ProjectsParamDto) {
     const response = await this.projectService.initiateAllocation(
       projectParamDto,
-      'ML-url',
+      process.env.ML_URL,
     );
     return {
       status: 200,
@@ -80,6 +80,22 @@ export class ProjectController {
     return {
       status: 200,
       message: 'Project Updated successfully.',
+      result: response,
+    };
+  }
+
+  @Patch('/add-to-project/:id')
+  async addToProject(
+    @Param() projectParamDto: ProjectsParamDto,
+    @Body() updateProjectDto: UpdateProjectDto,
+  ) {
+    const response = await this.projectService.freezeList(
+      projectParamDto.id,
+      updateProjectDto,
+    );
+    return {
+      status: 200,
+      message: 'Project List Freezed  successfully.',
       result: response,
     };
   }

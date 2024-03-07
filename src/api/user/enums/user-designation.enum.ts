@@ -34,4 +34,5 @@ export enum UserStream {
   Management = 'Management',
   IOS = 'IOS',
   Android = 'Android',
+  ML = 'Machine Learning',
 }

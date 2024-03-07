@@ -1,4 +1,4 @@
-enum Category {
+export enum Category {
   Technology = 'Technology',
   QualityAssurance = 'Quality Assurance',
   Design = 'Design',

@@ -9,6 +9,7 @@ import mongoose, {
 } from 'mongoose';
 import { User } from './schemas/user.schema';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FreezeProjectDto } from '../project/dto/freeze_list.dto';
 @Injectable()
 export class UserService {
   constructor(
@@ -65,6 +66,19 @@ export class UserService {
     );
 
     const updatedUser = await this.getUserDetails({ companyId: companyId });
+
+    return updatedUser;
+  }
+
+  async updateUserUsingName(
+    name: string,
+    freezeProjectDto: FreezeProjectDto,
+  ): Promise<User> {
+    const updateQuery: any = { freeze_status: true };
+
+    await this.updateUserDetails({ name: name }, { $set: updateQuery });
+
+    const updatedUser = await this.getUserDetails({ name: name });
 
     return updatedUser;
   }

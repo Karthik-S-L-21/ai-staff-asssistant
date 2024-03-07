@@ -53,6 +53,9 @@ export class User {
   @Prop({ required: true })
   secondary_skill: string[];
 
+  @Prop()
+  freeze_status?: boolean;
+
   @Prop({ type: Date })
   createdAt?: Date;
 
