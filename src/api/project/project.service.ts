@@ -29,6 +29,7 @@ export class ProjectService {
         start_date: 1,
         duration: 1,
         project_status: 1,
+        project_allocation_status: 1,
         _id: 1,
       };
       const projects = await this.projectModel
@@ -58,6 +59,7 @@ export class ProjectService {
         estimated_budget: addProjectDto.estimated_budget,
         short_description: addProjectDto.short_description,
         project_status: addProjectDto.project_status,
+        project_allocation_status: addProjectDto.project_allocation_status,
         skills_preferred: addProjectDto.skills_preferred,
         skills_required: addProjectDto.skills_required,
         platforms_to_be_built: addProjectDto.platforms_to_be_built,
