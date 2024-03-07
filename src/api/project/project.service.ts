@@ -88,194 +88,149 @@ export class ProjectService {
   async initiateAllocation(projectParamDto: ProjectsParamDto, mlUrl: string) {
     try {
       const projectDetails = await this.getProjectById(projectParamDto.id);
-      // console.log(
-      //   '🚀 ~ ProjectService ~ initiateAllocation ~ projectDetails:',
-      //   projectDetails,
-      // );
-      const mlRequestData = {
-        prompt_question: `
-          Project Name: ${projectDetails.project_name}
-          Project Description: ${projectDetails.short_description}
-          Duration: ${projectDetails.duration}
-          Budget: ${projectDetails.estimated_budget}
-          Start Date: ${projectDetails.start_date}
-          Skills Preferred: ${projectDetails.skills_preferred}
-          Platforms to be built:
-          ${projectDetails.platforms_to_be_built
-            .map((platform) => ` - ${platform}`)
-            .join('\n')}
-          Suggest total team size, Engineering team structure with their names and allocation percentage
-          and Tech stacks. Engineering team structure consists of title of engineer and percentage of allocation of
-          engineer into the project.
-        `,
-      };
-      // console.log(
-      //   '🚀 ~ ProjectService ~ initiateAllocation ~ mlRequestData:',
-      //   mlRequestData,
-      // );
-
-      // Make a request to the ML API
-      // const mlApiResponse = await firstValueFrom(
-      //   this.httpService.post(mlUrl, mlRequestData),
-      // );
-      // const mlResponseData = mlApiResponse.data;
-      const mlResponseData2 = `Project Name: Langchain POC
-      Project Description: This is a proof-of-concept project aimed at exploring the capabilities of Langchain.
-      Duration: 2 Months
-      Budget: $0.25M
-      Start Date: 03-01-2024
-Platforms to be built:
-        - Web (preferably angular)
-        - Backend (preferably java)
-        - Machine Learning Langchain 
-Engineering Team:
-          - Team Structure:
-            - Frontend Lead (FE Lead) - 1 Name - Mihir Suchak (100% allocation)
-            - Frontend Software Engineer (FE SE) - 1 Name - Aster Savio Fernandez (100% allocation)
-            - Backend Lead (BE Lead) - 1 Name - Yadulla Naresh Reddy (50% allocation)
-            - Backend Associate Software Engineer (BE ASE) - 1 Name - Shweta Ravi Talapalli (100% allocation)
-            - Quality Engineer (QA SSE) - 1 Name - Vighnesh V Pai (100% allocation)
-            - Engineering Manager - 1 Name - Shashanka N (50% allocation)
-            - Project Manager - 1 Name - S. Vakesh (100% allocation)
-            - Product Manager - 1 Name - Utpreksha Singh (50% allocation)
-            - Director of Engineering - 1 Name - Shanti Kuropati (25% allocation)
-          - Total Team Size: 9
-Tech Stacks:
-        - Java
-        - Python
-        - Machine Learning`;
-      const result2 = await this.transformMlApiResponse(mlResponseData2);
       console.log(
-        '🚀 ~ ProjectService ~ initiateAllocation ~ result2:',
-        result2,
+        '🚀 ~ ProjectService ~ initiateAllocation ~ projectDetails:',
+        projectDetails,
       );
-      return {
-        statusCode: 200,
-        message: 'Initiation Successful',
-        result: result2,
-      };
+
+      const url = constructURLWithSearchParameter(mlUrl, {
+        project_name: projectDetails.project_name,
+        project_description: projectDetails.short_description,
+        platforms: projectDetails.platforms_to_be_built
+          // .map((platform) => ` - ${platform}`)
+          .join(','),
+        duration: projectDetails.duration,
+        budget: projectDetails.estimated_budget,
+        start_date: '03/03/2024',
+        skills_preferred: projectDetails.skills_preferred.join(','),
+      });
+
+      console.log(url);
+      // Make a request to the ML API
+      const mlApiResponse = await firstValueFrom(this.httpService.post(url));
+      const mlResponseData = mlApiResponse.data;
+
+      console.log('hereeee..........', JSON.parse(mlResponseData));
+      return JSON.parse(mlResponseData);
     } catch (error) {
       console.log('🚀 ~ ProjectService ~ initiateAllocation ~ error:', error);
 
       //dummy data for timebeing
-      return {
-        projectName: 'Gen AI POC',
-        projectDescription:
-          'This is a proof-of-concept project aimed at exploring the capabilities of Gen AI.',
-        duration: '6 Months',
-        budget: '$0.25M',
-        startDate: '06-30-2024',
-        platformsToBeBuilt: ['Web', 'Backend'],
-        engineeringTeam: {
-          teamStructure: [
-            {
-              title: 'Frontend Lead (FE Lead)',
-              name: 'Suchak Mihir Dinkarray',
-              allocation: 100,
-              category: 'Frontend',
-              stream: 'Technology',
-              current_allocated_projects: ['Loreal'],
-              skills: ['python', 'java'],
-              experience: '17',
-            },
-            {
-              title: 'Frontend Software Engineer (FE SE)',
-              name: 'Raghav Sharma',
-              allocation: 100,
-              category: 'Frontend',
-              stream: 'Technology',
-              current_allocated_projects: ['Loreal'],
-              skills: ['python', 'java'],
-              experience: '17',
-            },
-            {
-              title: 'Backend Lead (BE Lead)',
-              name: 'Srijita Thakur',
-              allocation: 50,
-              category: 'Backend',
-              stream: 'Technology',
-              current_allocated_projects: ['Loreal'],
-              skills: ['python', 'java'],
-              experience: '17',
-            },
-            {
-              title: 'Backend Associate Software Engineer (BE ASE)',
-              name: 'Bandhan Roy',
-              allocation: 100,
-              category: 'Backend',
-              stream: 'Technology',
-              current_allocated_projects: ['Loreal'],
-              skills: ['python', 'java'],
-              experience: '31',
-            },
-            {
-              title: 'Quality Engineer (QA SSE)',
-              name: 'Aishwarya Chandrakant Madiwal',
-              allocation: 100,
-              category: 'QA',
-              stream: 'QualityAssurance',
-              current_allocated_projects: ['Loreal'],
-              skills: ['python', 'java'],
-              experience: '22',
-            },
-            {
-              title: 'Engineering Manager',
-              name: 'Vinay S',
-              allocation: 50,
-              category: 'Management',
-              stream: 'Management',
-              current_allocated_projects: ['Loreal'],
-              skills: ['python', 'java'],
-              experience: '17',
-            },
-            {
-              title: 'Project Manager',
-              name: 'Maryam Fatima',
-              allocation: 100,
-              category: 'Management',
-              stream: 'Management',
-              current_allocated_projects: ['Lecet'],
-              skills: ['python', 'java'],
-              experience: '19',
-            },
-            {
-              title: 'Product Manager',
-              name: 'Pallavi Tandan',
-              allocation: 50,
-              category: 'Management',
-              stream: 'Management',
-              current_allocated_projects: ['Lecet'],
-              skills: ['python', 'java'],
-              experience: '28',
-            },
-            {
-              title: 'Director of Engineering',
-              name: 'Shubhang Krishnamurthy Vishwamitra',
-              allocation: 25,
-              category: 'Management',
-              stream: 'Management',
-              current_allocated_projects: ['Lecet'],
-              skills: ['python', 'java'],
-              experience: '34',
-            },
-          ],
-          totalTeamSize: 9,
-        },
-        techStacks: ['Python', 'Langchain', 'NodeJS', 'React'],
-      };
-      // throw new InternalServerErrorException(
-      //   'Failed to fetch data from ML model',
-      // );
+      // return {
+      //   projectName: 'Gen AI POC',
+      //   projectDescription:
+      //     'This is a proof-of-concept project aimed at exploring the capabilities of Gen AI.',
+      //   duration: '6 Months',
+      //   budget: '$0.25M',
+      //   startDate: '06-30-2024',
+      //   platformsToBeBuilt: ['Web', 'Backend'],
+      //   engineeringTeam: {
+      //     teamStructure: [
+      //       {
+      //         title: 'Frontend Lead (FE Lead)',
+      //         name: 'Suchak Mihir Dinkarray',
+      //         allocation: 100,
+      //         category: 'Frontend',
+      //         stream: 'Technology',
+      //         current_allocated_projects: ['Loreal'],
+      //         skills: ['python', 'java'],
+      //         experience: '17',
+      //       },
+      //       {
+      //         title: 'Frontend Software Engineer (FE SE)',
+      //         name: 'Raghav Sharma',
+      //         allocation: 100,
+      //         category: 'Frontend',
+      //         stream: 'Technology',
+      //         current_allocated_projects: ['Loreal'],
+      //         skills: ['python', 'java'],
+      //         experience: '17',
+      //       },
+      //       {
+      //         title: 'Backend Lead (BE Lead)',
+      //         name: 'Srijita Thakur',
+      //         allocation: 50,
+      //         category: 'Backend',
+      //         stream: 'Technology',
+      //         current_allocated_projects: ['Loreal'],
+      //         skills: ['python', 'java'],
+      //         experience: '17',
+      //       },
+      //       {
+      //         title: 'Backend Associate Software Engineer (BE ASE)',
+      //         name: 'Bandhan Roy',
+      //         allocation: 100,
+      //         category: 'Backend',
+      //         stream: 'Technology',
+      //         current_allocated_projects: ['Loreal'],
+      //         skills: ['python', 'java'],
+      //         experience: '31',
+      //       },
+      //       {
+      //         title: 'Quality Engineer (QA SSE)',
+      //         name: 'Aishwarya Chandrakant Madiwal',
+      //         allocation: 100,
+      //         category: 'QA',
+      //         stream: 'QualityAssurance',
+      //         current_allocated_projects: ['Loreal'],
+      //         skills: ['python', 'java'],
+      //         experience: '22',
+      //       },
+      //       {
+      //         title: 'Engineering Manager',
+      //         name: 'Vinay S',
+      //         allocation: 50,
+      //         category: 'Management',
+      //         stream: 'Management',
+      //         current_allocated_projects: ['Loreal'],
+      //         skills: ['python', 'java'],
+      //         experience: '17',
+      //       },
+      //       {
+      //         title: 'Project Manager',
+      //         name: 'Maryam Fatima',
+      //         allocation: 100,
+      //         category: 'Management',
+      //         stream: 'Management',
+      //         current_allocated_projects: ['Lecet'],
+      //         skills: ['python', 'java'],
+      //         experience: '19',
+      //       },
+      //       {
+      //         title: 'Product Manager',
+      //         name: 'Pallavi Tandan',
+      //         allocation: 50,
+      //         category: 'Management',
+      //         stream: 'Management',
+      //         current_allocated_projects: ['Lecet'],
+      //         skills: ['python', 'java'],
+      //         experience: '28',
+      //       },
+      //       {
+      //         title: 'Director of Engineering',
+      //         name: 'Shubhang Krishnamurthy Vishwamitra',
+      //         allocation: 25,
+      //         category: 'Management',
+      //         stream: 'Management',
+      //         current_allocated_projects: ['Lecet'],
+      //         skills: ['python', 'java'],
+      //         experience: '34',
+      //       },
+      //     ],
+      //     totalTeamSize: 9,
+      //   },
+      //   techStacks: ['Python', 'Langchain', 'NodeJS', 'React'],
+      // };
+      throw new InternalServerErrorException(
+        'Failed to fetch data from ML model',
+      );
     }
   }
 
   async transformMlApiResponse(mlApiResponse: string) {
     // Split the response into lines
-    const lines = mlApiResponse.split('\n');
-    console.log(
-      '🚀 ~ ProjectService ~ transformMlApiResponse ~ lines:',
-      lines[2],
-    );
+    const lines = mlApiResponse.split('\n').filter((st) => st.length && st);
+    console.log('🚀 ~ ProjectService ~ transformMlApiResponse ~ lines:', lines);
 
     // Extract values from each line
     const projectName = lines[0].split(': ')[1].trim();
@@ -283,26 +238,27 @@ Tech Stacks:
       '🚀 ~ ProjectService ~ transformMlApiResponse ~ projectName:',
       projectName,
     );
-    const projectDescription = lines[1].split(': ')[1].trim();
+    const projectDescription = lines[1].split(': ')[1]?.trim();
     console.log(
       '🚀 ~ ProjectService ~ transformMlApiResponse ~ projectDescription:',
       projectDescription,
     );
+    console.log(lines[2]);
     const duration = lines[2].split(': ')[1].trim();
-    console.log(
-      '🚀 ~ ProjectService ~ transformMlApiResponse ~ duration:',
-      duration,
-    );
+    // console.log(
+    //   '🚀 ~ ProjectService ~ transformMlApiResponse ~ duration:',
+    //   duration,
+    // );
     const budget = lines[3].split(': ')[1].trim();
-    console.log(
-      '🚀 ~ ProjectService ~ transformMlApiResponse ~ budget:',
-      budget,
-    );
+    // console.log(
+    //   '🚀 ~ ProjectService ~ transformMlApiResponse ~ budget:',
+    //   budget,
+    // );
     const startDate = lines[4].split(': ')[1].trim();
-    console.log(
-      '🚀 ~ ProjectService ~ transformMlApiResponse ~ startDate:',
-      startDate,
-    );
+    // console.log(
+    //   '🚀 ~ ProjectService ~ transformMlApiResponse ~ startDate:',
+    //   startDate,
+    // );
 
     // Extract platforms to be built
     const platformsToBeBuilt = lines
@@ -312,30 +268,6 @@ Tech Stacks:
       '🚀 ~ ProjectService ~ transformMlApiResponse ~ platformsToBeBuilt:',
       platformsToBeBuilt,
     );
-
-    // // Extract engineering team details
-    // const engineeringTeam = lines
-    //   .slice(
-    //     lines.indexOf('Engineering Team:') + 3,
-    //     lines.indexOf('Total Team Size:'),
-    //   )
-    //   .map((line) => {
-    //     const [title, nameTag, name, allocation, companyId] = line
-    //       .trim()
-    //       .split(' - ')
-    //       .map((item) => item.trim().replace(/^- /, ''));
-
-    //     if (name !== undefined) {
-    //       return {
-    //         title,
-    //         nameTag,
-    //         name,
-    //         allocation: parseInt(allocation, 10),
-    //         companyId,
-    //       };
-    //     }
-    //   })
-    //   .filter(Boolean);
 
     // Extract engineering team details
     const engineeringTeam = lines
@@ -579,3 +511,51 @@ Tech Stacks:
     }
   }
 }
+
+/**
+ * method only formats for path parameters
+ * search or query parameter does not work
+ * @param rawURL the raw string url
+ * @param pathParamObject the path param object that needs to be dynamically replaced
+ * @returns string
+ */
+const returnFormattedURL = (
+  rawURL: string,
+  pathParamObject?: Record<string, string>,
+): string => {
+  if (!pathParamObject) return rawURL;
+  Object.keys(pathParamObject).forEach((constraint) => {
+    pathParamObject[constraint] &&
+      (rawURL = rawURL.replace(
+        new RegExp(`{${constraint}}`, 'g'),
+        pathParamObject[constraint],
+      ));
+  });
+  return rawURL;
+};
+
+/**
+ * method appends the search parameters to the URL
+ * @param rawURL the raw string url
+ * @param pathParamObject the path param object that needs to be dynamically replaced
+ * @returns string
+ */
+const constructURLWithSearchParameter = (
+  rawURL: string,
+  searchParameterObject: Record<string, string | number | string[]>,
+): string => {
+  Object.keys(searchParameterObject).forEach((key, index) => {
+    rawURL += `${index === 0 ? '?' : '&'}`;
+    if (Array.isArray(searchParameterObject[key])) {
+      (searchParameterObject[key] as string[]).forEach((data, index) => {
+        rawURL += `${index === 0 ? '' : '&'}${key}[]=${data}`;
+      });
+    } else rawURL += `${key}=${searchParameterObject[key]}`;
+  });
+  return rawURL;
+};
+
+export const httpUtil = {
+  returnFormattedURL,
+  constructURLWithSearchParameter,
+};

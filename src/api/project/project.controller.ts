@@ -59,7 +59,7 @@ export class ProjectController {
   async initiateAllocation(@Param() projectParamDto: ProjectsParamDto) {
     const response = await this.projectService.initiateAllocation(
       projectParamDto,
-      'ML-url',
+      process.env.ML_URL,
     );
     return {
       status: 200,
